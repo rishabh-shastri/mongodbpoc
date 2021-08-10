@@ -1,0 +1,14 @@
+amazon:
+  aws:
+    accesskey: eldorado
+    region: ap-south-1
+    secretkey: eldorado1
+  dynamodb:
+    endpoint: http://localhost:8000/
+connection:
+  frontend: '"http://localhost:3000"'
+server:
+  port: 8085
+spring:
+  application:
+    name: product-service

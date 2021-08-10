@@ -1,0 +1,121 @@
+pipeline {
+    agent any
+
+	tools {
+        jdk 'jdk11'
+    }
+
+    environment { 
+    	dockerImage = ''
+       	KUBECONFIG ='/home/ubuntu/config'
+        BRANCH_NAME = env.GIT_BRANCH.replace('productphase-productservice/', '')
+        ECR_URL = 'https://364768860491.dkr.ecr.us-east-1.amazonaws.com'
+		registry = "eldorado:product-$BUILD_NUMBER"
+		registryCredential = 'ecr:us-east-1:prod-aws-access'
+		IMAGE_PREFIX = '364768860491.dkr.ecr.us-east-1.amazonaws.com'
+    }
+
+    stages {
+	
+	stage('Compile')
+	{
+	    steps{
+           echo env.GIT_BRANCH
+	       sh '''chmod 777 mvnw 
+		    ./mvnw compile package'''	
+		}
+	}
+	
+	stage('Test')
+	{
+		steps{
+			sh '''
+		    ./mvnw test'''	
+		}
+	}
+
+	stage('Install') {
+
+		steps {
+			sh '''
+		    	./mvnw install'''	
+		}
+	}
+	
+	stage('Testing Code coverage')
+	{
+		steps{
+			jacoco( execPattern: 'target/*.exec',classPattern: 'target/classes', sourcePattern: 'src/main/java', exclusionPattern: 'src/test*')
+		}
+	}
+
+
+	stage('SonarQube Analysis')
+	{
+		steps{
+			withSonarQubeEnv('sonarqube') {
+				sh '''
+		    	./mvnw sonar:sonar'''
+			}
+		}
+	}
+
+    stage('Building Our Image') { 
+    	when {
+                anyOf {
+                    branch 'master';
+                    branch 'dev';      
+                         
+                }
+        }
+        steps { 
+                script {
+                    dockerImage = docker.build(registry)
+                }
+            } 
+        }
+        
+	stage('Push Image') {
+		when {
+                anyOf {
+                    branch 'master';
+                    branch 'dev';      
+                           
+                }
+        }
+		steps {
+	            script {
+	                docker.withRegistry(ECR_URL, registryCredential) {
+	                    dockerImage.push()
+	                sh "docker image rmi -f $IMAGE_PREFIX/$registry"
+	                sh '''docker rmi $(docker images --filter=reference="*product-*" -q)'''
+	                } 
+	            }
+	        }
+		}
+	stage ('Deploy Image') {
+		when {
+                anyOf {
+                    branch 'master';
+                    branch 'dev';      
+                           
+                }
+        	}
+
+        steps {
+        		withAWS(credentials:'prod-aws-access')
+        		{ 
+	        		sh '''
+		            kubectl apply -f product-service.yml -n eldorado
+		            kubectl apply -f product-deployment.yml -n eldorado
+		        	kubectl set image deployment/product-deployment product=$IMAGE_PREFIX/$registry -n eldorado''' 
+	        	}
+	        }
+		}
+
+	}
+}
+
+
+
+

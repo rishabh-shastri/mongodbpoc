@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.5.2</version>
+		<relativePath /> <!-- lookup parent from repository -->
+	</parent>
+	<groupId>com.eldorado</groupId>
+	<artifactId>productservice</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>productservice</name>
+	<description>Product microservice - El Dorado</description>
+	<properties>
+		<java.version>11</java.version>
+		<spring-cloud.version>2020.0.3</spring-cloud.version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>io.cucumber</groupId>
+			<artifactId>cucumber-junit</artifactId>
+			<version>6.10.4</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>io.cucumber</groupId>
+			<artifactId>cucumber-java</artifactId>
+			<version>6.10.4</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web-services</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<scope>runtime</scope>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+	      <groupId>org.springframework.boot</groupId>
+	      <artifactId>spring-boot-starter-data-mongodb</artifactId>
+	    </dependency>
+		
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.17</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-ui</artifactId>
+			<version>1.2.32</version>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<testFailureIgnore>true</testFailureIgnore>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.7</version>
+				<configuration>
+
+					<excludes>
+						<exclude>com/eldorado/productservice/entities/**/*</exclude>
+						<exclude>com/eldorado/productservice/exceptions/**/*</exclude>
+						<exclude>com/eldorado/productservice/repositories/**/*</exclude>
+						<exclude>com/eldorado/productservice/controllers/**/*</exclude>
+						<exclude>com/eldorado/productservice/config/**/*</exclude>
+						<exclude>com/eldorado/productservice/constant/**/*</exclude>
+
+					</excludes>
+
+				</configuration>
+				<executions>
+					<execution>
+						<id>coverage-initialize</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>coverage-report</id>
+						<phase>post-integration-test</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+					<!-- Threshold -->
+					<execution>
+						<id>coverage-check</id>
+						<goals>
+							<goal>check</goal>
+						</goals>
+						<configuration>
+							<rules>
+								<rule>
+									<element>CLASS</element>
+
+								</rule>
+							</rules>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+		</plugins>
+	</build>
+
+</project>

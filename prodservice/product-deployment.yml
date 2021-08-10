@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: product-deployment
+  labels:
+    app: product
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: product
+  template:
+    metadata:
+      labels:
+        app: product
+    spec:
+      containers:
+      - name: product
+        image: 364768860491.dkr.ecr.us-east-1.amazonaws.com/eldorado:tagVersion
+        ports:
+        - containerPort: 8085
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+        envFrom:
+        - configMapRef:
+            name: dynamo-config
+        - configMapRef:
+            name: common-config
+        - configMapRef:
+            name: product-config
+        - secretRef:
+            name: dynamo-secret

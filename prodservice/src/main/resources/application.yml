@@ -1,0 +1,23 @@
+spring:
+  profiles:
+    active: dev
+  application:
+    name: product-service
+  data:
+    mongodb:
+      database: mongopoc
+      host: localhost
+      port: 27017
+server:
+  port: 8085
+frontend:
+  connection: http://localhost:3000
+amazon:
+  aws:
+    accesskey: eldorado
+    region: ap-south-1
+    secretkey: eldorado1 
+  dynamodb:
+    endpoint: http://localhost:8000/
+
+
